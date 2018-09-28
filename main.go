@@ -4,7 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bradford-hamilton/explore-the-chi/features/transaction"
+	"github.com/bradford-hamilton/explore-the-chi/api/transaction"
+	"github.com/bradford-hamilton/explore-the-chi/config"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
@@ -12,7 +13,7 @@ import (
 
 // Routes defines middleware, sets version namespace, mounts different routes
 // and returns a pointer to a chi multiplexer
-func Routes() *chi.Mux {
+func Routes(dbConn *config.DBConfig) *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Use(
@@ -24,14 +25,21 @@ func Routes() *chi.Mux {
 	)
 
 	router.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/transaction", transaction.Routes())
+		r.Mount("/api/transaction", transaction.Routes(dbConn))
 	})
 
 	return router
 }
 
 func main() {
-	router := Routes()
+	dbConn := config.NewDynamo()
+
+	env, err := config.NewEnvConfig()
+	if err != nil {
+		log.Panicln("Configuration error", err)
+	}
+
+	router := Routes(dbConn)
 
 	walkFunc := func(
 		method string,
@@ -47,5 +55,6 @@ func main() {
 		log.Panicf("Error Log: %s\n", err.Error()) // panic if there is an error
 	}
 
-	log.Fatal(http.ListenAndServe(":1337", router))
+	log.Println("Serving application on PORT :", env.PORT)
+	log.Fatal(http.ListenAndServe(":"+env.PORT, router))
 }
