@@ -33,7 +33,12 @@ func Routes() *chi.Mux {
 func main() {
 	router := Routes()
 
-	walkFunc := func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
+	walkFunc := func(
+		method string,
+		route string,
+		handler http.Handler,
+		middlewares ...func(http.Handler) http.Handler,
+	) error {
 		log.Printf("%s %s\n", method, route) // walk and print all the routes
 		return nil
 	}
