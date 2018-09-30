@@ -23,11 +23,6 @@ type DBConfig struct {
 	DB *dynamo.DB
 }
 
-// BtcTransactionTable struct for creating initial btc transaction table for testing
-type BtcTransactionTable struct {
-	TransactionID string `dynamo:"Id,hash"`
-}
-
 // NewDynamo is used to generate a Dynamo DB connection to be passed around the
 // application
 func NewDynamo() *DBConfig {
@@ -49,6 +44,10 @@ func NewDynamo() *DBConfig {
 }
 
 func createTablesIfNotExist(dbConn *DBConfig) {
+	type BtcTransactionTable struct {
+		TransactionID string `dynamo:"Id,hash"`
+	}
+
 	err := dbConn.DB.
 		CreateTable("btc-transaction", BtcTransactionTable{}).
 		Provision(1, 1).
