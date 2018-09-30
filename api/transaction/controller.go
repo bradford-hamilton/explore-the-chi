@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -37,8 +38,27 @@ func DeleteTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 // CreateTransaction creates a transaction and returns a JSON success message
 func CreateTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		decoder := json.NewDecoder(r.Body)
+		var data Transaction
+		err := decoder.Decode(&data)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		table := dbConn.DB.Table("btc-transaction")
+		transaction := Transaction{
+			ID:     data.ID,
+			Input:  data.Input,
+			Output: data.Output,
+		}
+
+		err = table.Put(transaction).Run()
+		if err != nil {
+			fmt.Println(err)
+		}
+
 		response := make(map[string]string)
-		response["message"] = "Created transaction successfully"
+		response["message"] = "Transaction with ID: " + data.ID + " created successfully"
 
 		render.JSON(w, r, response) // a chi router helper for serializing and returning json
 	}
