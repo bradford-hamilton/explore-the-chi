@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -22,6 +23,11 @@ type DBConfig struct {
 	DB *dynamo.DB
 }
 
+// BtcTransactionTable struct for creating initial btc transaction table for testing
+type BtcTransactionTable struct {
+	TransactionID string `dynamo:"Id,hash"`
+}
+
 // NewDynamo is used to generate a Dynamo DB connection to be passed around the
 // application
 func NewDynamo() *DBConfig {
@@ -37,7 +43,19 @@ func NewDynamo() *DBConfig {
 		Endpoint: aws.String(envVariables.DynamoEndpoint),
 	})
 
+	createTablesIfNotExist(&config)
+
 	return &config
+}
+
+func createTablesIfNotExist(dbConn *DBConfig) {
+	err := dbConn.DB.
+		CreateTable("btc-transaction", BtcTransactionTable{}).
+		Provision(1, 1).
+		Run()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 // NewEnvConfig is used to generate a an EnvConfig struct with the applications
