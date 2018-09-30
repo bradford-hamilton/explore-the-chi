@@ -12,8 +12,8 @@ import (
 // EnvConfig is a struct of the applications ENV variables
 type EnvConfig struct {
 	PORT           string
-	region         string
-	dynamoEndpoint string
+	Region         string `yaml:"region"`
+	DynamoEndpoint string `yaml:"dynamoEndpoint"`
 }
 
 // DBConfig is a struct containing DB which is a connection to the application's
@@ -26,15 +26,15 @@ type DBConfig struct {
 // application
 func NewDynamo() *DBConfig {
 	config := DBConfig{}
+	envVariables, err := NewEnvConfig()
 
-	envVariables, err := initViper()
 	if err != nil {
 		log.Panicln("Configuration error", err)
 	}
 
 	config.DB = dynamo.New(session.New(), &aws.Config{
-		Region:   aws.String(envVariables.region),
-		Endpoint: aws.String(envVariables.dynamoEndpoint),
+		Region:   aws.String(envVariables.Region),
+		Endpoint: aws.String(envVariables.DynamoEndpoint),
 	})
 
 	return &config
