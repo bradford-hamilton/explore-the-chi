@@ -76,25 +76,14 @@ func CreateTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 // transactions. Response is JSON.
 func GetAllTransactions(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO: check if we want table reference above this return to run once on program start.
-		// We will have to see if that works - and if it's better performaance or if we need to define
-		// the table like below each time the api is called
 		table := dbConn.DB.Table("btc-transaction")
-		transaction := Transaction{
-			ID:     "neat-id",
-			Input:  "0xInputThree",
-			Output: "0xOutputThree",
-		}
 
-		err := table.Put(transaction).Run()
-
+		var txs []Transaction
+		err := table.Scan().All(&txs)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		var result Transaction
-		err = table.Get("Id", transaction.ID).One(&result)
-
-		render.JSON(w, r, result) // a chi router helper for serializing and returning json
+		render.JSON(w, r, txs) // a chi router helper for serializing and returning json
 	}
 }
