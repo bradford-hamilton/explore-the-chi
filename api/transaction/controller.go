@@ -13,9 +13,9 @@ import (
 // GetTransaction returns a single Transaction struct as JSON
 func GetTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		transactionID := chi.URLParam(r, "transactionID")
 		table := dbConn.DB.Table("btc-transaction")
 
+		transactionID := chi.URLParam(r, "transactionID")
 		var tx Transaction
 		err := table.Get("Id", transactionID).One(&tx)
 		if err != nil {
@@ -29,8 +29,12 @@ func GetTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 // DeleteTransaction deletes a transaction and returns a success JSON message
 func DeleteTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		table := dbConn.DB.Table("btc-transaction")
+		transactionID := chi.URLParam(r, "transactionID")
+		table.Delete("Id", transactionID).Run()
+
 		response := make(map[string]string)
-		response["message"] = "Deleted transaction successfully"
+		response["message"] = "Deleted transaction: " + transactionID + " successfully"
 
 		render.JSON(w, r, response)
 	}
