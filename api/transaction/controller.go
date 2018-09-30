@@ -35,7 +35,14 @@ func DeleteTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	}
 }
 
-// CreateTransaction creates a transaction and returns a JSON success message
+// CreateTransaction creates a transaction and returns a JSON success message.
+// Submit format below:
+// {
+//		"ID": "0xSuperC00lId123",
+//		"Input":  "0xNeatInput",
+//		"Output": "0xNeatOutput"
+// }
+// Ensure content type is application/json
 func CreateTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
