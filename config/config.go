@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -48,13 +47,10 @@ func createTablesIfNotExist(dbConn *DBConfig) {
 		TransactionID string `dynamo:"Id,hash"`
 	}
 
-	err := dbConn.DB.
+	dbConn.DB.
 		CreateTable("btc-transaction", BtcTransactionTable{}).
 		Provision(1, 1).
 		Run()
-	if err != nil {
-		fmt.Println(err)
-	}
 }
 
 // NewEnvConfig is used to generate a an EnvConfig struct with the applications

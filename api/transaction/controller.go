@@ -14,14 +14,15 @@ import (
 func GetTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		transactionID := chi.URLParam(r, "transactionID")
+		table := dbConn.DB.Table("btc-transaction")
 
-		transaction := Transaction{
-			ID:     transactionID,
-			Input:  "0xNeatInput",
-			Output: "0xNeatOutput",
+		var tx Transaction
+		err := table.Get("Id", transactionID).One(&tx)
+		if err != nil {
+			fmt.Println(err)
 		}
 
-		render.JSON(w, r, transaction) // a chi router helper for serializing and returning json
+		render.JSON(w, r, tx) // a chi router helper for serializing and returning json
 	}
 }
 
