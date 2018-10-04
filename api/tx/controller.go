@@ -1,4 +1,4 @@
-package transaction
+package tx
 
 import (
 	"encoding/json"
@@ -15,9 +15,9 @@ func GetTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		table := dbConn.DB.Table("btc-transaction")
 
-		transactionID := chi.URLParam(r, "transactionID")
+		txID := chi.URLParam(r, "txID")
 		var tx Transaction
-		err := table.Get("Id", transactionID).One(&tx)
+		err := table.Get("Id", txID).One(&tx)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -30,11 +30,11 @@ func GetTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 func DeleteTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		table := dbConn.DB.Table("btc-transaction")
-		transactionID := chi.URLParam(r, "transactionID")
-		table.Delete("Id", transactionID).Run()
+		txID := chi.URLParam(r, "txID")
+		table.Delete("Id", txID).Run()
 
 		response := make(map[string]string)
-		response["message"] = "Deleted transaction: " + transactionID + " successfully"
+		response["message"] = "Deleted transaction: " + txID + " successfully"
 
 		render.JSON(w, r, response)
 	}

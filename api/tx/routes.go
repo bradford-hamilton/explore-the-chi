@@ -1,4 +1,4 @@
-package transaction
+package tx
 
 import (
 	"github.com/bradford-hamilton/explore-the-chi/config"
@@ -10,8 +10,8 @@ func Routes(dbConn *config.DBConfig) *chi.Mux {
 	router := chi.NewRouter()
 
 	// transaction endpoints
-	router.Get("/{transactionID}", GetTransaction(dbConn))
-	router.Delete("/{transactionID}", DeleteTransaction(dbConn))
+	router.Get("/{txID}", GetTransaction(dbConn))
+	router.Delete("/{txID}", DeleteTransaction(dbConn))
 	router.Post("/", CreateTransaction(dbConn))
 	router.Get("/", GetAllTransactions(dbConn))
 
