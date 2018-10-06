@@ -1,4 +1,4 @@
-package tx
+package models
 
 // Transaction is the data model for a transaction
 type Transaction struct {

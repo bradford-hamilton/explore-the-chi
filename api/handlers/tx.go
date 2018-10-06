@@ -1,10 +1,11 @@
-package tx
+package handlers
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/bradford-hamilton/explore-the-chi/api/models"
 	"github.com/bradford-hamilton/explore-the-chi/config"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -16,7 +17,7 @@ func GetTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 		table := dbConn.DB.Table("btc-transaction")
 
 		txID := chi.URLParam(r, "txID")
-		var tx Transaction
+		var tx models.Transaction
 		err := table.Get("Id", txID).One(&tx)
 		if err != nil {
 			fmt.Println(err)
@@ -51,14 +52,14 @@ func DeleteTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 func CreateTransaction(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
-		var data Transaction
+		var data models.Transaction
 		err := decoder.Decode(&data)
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		table := dbConn.DB.Table("btc-transaction")
-		transaction := Transaction{
+		transaction := models.Transaction{
 			ID:     data.ID,
 			Input:  data.Input,
 			Output: data.Output,
@@ -82,7 +83,7 @@ func GetAllTransactions(dbConn *config.DBConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		table := dbConn.DB.Table("btc-transaction")
 
-		var txs []Transaction
+		var txs []models.Transaction
 		err := table.Scan().All(&txs)
 		if err != nil {
 			fmt.Println(err)
