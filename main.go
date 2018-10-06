@@ -20,7 +20,7 @@ func Routes(dbConn *config.DBConfig) *chi.Mux {
 		render.SetContentType(render.ContentTypeJSON), // set content-type headers as application/json
 		middleware.Logger,          // log api request calls
 		middleware.DefaultCompress, // compress results, mostly gzipping assets and json
-		middleware.RedirectSlashes, // redirect slashes to no slash URL versions
+		middleware.StripSlashes,    // strip slashes to no slash URL versions
 		middleware.Recoverer,       // recover from panics without crashing server
 	)
 
