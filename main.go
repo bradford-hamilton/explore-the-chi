@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bradford-hamilton/explore-the-chi/api/tx"
+	"github.com/bradford-hamilton/explore-the-chi/api/routes"
 	"github.com/bradford-hamilton/explore-the-chi/config"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -24,8 +24,8 @@ func Routes(dbConn *config.DBConfig) *chi.Mux {
 		middleware.Recoverer,       // recover from panics without crashing server
 	)
 
-	router.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/tx", tx.Routes(dbConn))
+	router.Route("/api", func(r chi.Router) {
+		r.Mount("/v1/tx", routes.Routes(dbConn))
 	})
 
 	return router
