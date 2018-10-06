@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bradford-hamilton/explore-the-chi/api/transaction"
+	"github.com/bradford-hamilton/explore-the-chi/api/tx"
 	"github.com/bradford-hamilton/explore-the-chi/config"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -25,7 +25,7 @@ func Routes(dbConn *config.DBConfig) *chi.Mux {
 	)
 
 	router.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/transaction", transaction.Routes(dbConn))
+		r.Mount("/api/tx", tx.Routes(dbConn))
 	})
 
 	return router
